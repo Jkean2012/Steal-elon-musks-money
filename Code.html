@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steal Elon Musk's Money</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        #container {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        #game {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+        }
+
+        #money, #elonMoney {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #autoClicker, #shop {
+            margin-top: 20px;
+        }
+
+        #autoClicker p, #shop p {
+            margin: 0;
+        }
+
+        #elonAccount {
+            text-align: center;
+        }
+
+        #elonAccount img {
+            width: 100px;
+            height: auto;
+        }
+
+        #hackingPanel {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #hackingPanel input {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="game">
+            <h1>Steal Elon's Money</h1>
+            <div id="money">$0</div>
+            <button id="clickButton">Steal $1 Million</button>
+            <div id="autoClicker">
+                <p>Auto Clicker: $400 Million</p>
+                <button id="buyAutoClicker">Buy Auto Clicker</button>
+            </div>
+            <div id="shop">
+                <h2>Shop</h2>
+                <p>Luxury Car: $150 Million</p>
+                <button class="shopItem" data-cost="150000000">Buy Luxury Car</button>
+                <p>Private Jet: $250 Million</p>
+                <button class="shopItem" data-cost="250000000">Buy Private Jet</button>
+                <p>Island: $500 Million</p>
+                <button class="shopItem" data-cost="500000000">Buy Island</button>
+            </div>
+        </div>
+        <div id="elonAccount">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Elon_Musk_Royal_Society_%28crop1%29.jpg" alt="Elon Musk">
+            <div>Elon's Bank Account</div>
+            <div id="elonMoney">$209,200,000,000</div>
+            <div id="hackingPanel">
+                <h2>Hacking Panel</h2>
+                <p>Enter the code to steal $200 Million</p>
+                <input type="text" id="hackingInput" placeholder="Enter code">
+                <button id="hackButton">Hack</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let money = 0;
+        let elonMoney = 209_200_000_000;
+        const moneyPerClick = 1_000_000;
+        const autoClickerCost = 400_000_000;
+        const autoClickerIncome = 20_000_000;
+        let autoClickerActive = false;
+        const adminCode = "ADMIN123";
+        let hackingCode = generateHackingCode();
+
+        const moneyDisplay = document.getElementById('money');
+        const elonMoneyDisplay = document.getElementById('elonMoney');
+        const clickButton = document.getElementById('clickButton');
+        const buyAutoClickerButton = document.getElementById('buyAutoClicker');
+        const shopItems = document.querySelectorAll('.shopItem');
+        const hackButton = document.getElementById('hackButton');
+        const hackingInput = document.getElementById('hackingInput');
+
+        clickButton.addEventListener('click', () => {
+            if (elonMoney >= moneyPerClick) {
+                money += moneyPerClick;
+                elonMoney -= moneyPerClick;
+                updateDisplays();
+            }
+            checkElonMoney();
+        });
+
+        buyAutoClickerButton.addEventListener('click', () => {
+            if (money >= autoClickerCost) {
+                money -= autoClickerCost;
+                autoClickerActive = true;
+                buyAutoClickerButton.disabled = true;
+                startAutoClicker();
+                updateDisplays();
+            }
+        });
+
+        shopItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const cost = parseInt(item.getAttribute('data-cost'));
+                if (money >= cost) {
+                    money -= cost;
+                    updateDisplays();
+                } else {
+                    alert("You don't have enough money to buy this item.");
+                }
+            });
+        });
+
+        hackButton.addEventListener('click', () => {
+            const userInput = hackingInput.value.trim();
+            if (userInput === hackingCode) {
+                if (elonMoney >= 200_000_000) {
+                    money += 200_000_000;
+                    elonMoney -= 200_000_000;
+                    alert("Hack successful! Stole $200 Million.");
+                    hackingCode = generateHackingCode();  // Generate a new code after successful hack
+                }
+            } else if (userInput === adminCode) {
+                money += 1_000_000_000;
+                alert("Admin access granted! Added $1 Billion.");
+            } else {
+                alert("Incorrect code. Try again!");
+            }
+            updateDisplays();
+            hackingInput.value = "";
+            checkElonMoney();
+        });
+
+        function generateHackingCode() {
+            return Math.floor(1000 + Math.random() * 9000).toString();  // Generates a random 4-digit code
+        }
+
+        function updateDisplays() {
+            moneyDisplay.textContent = `$${money.toLocaleString()}`;
+            elonMoneyDisplay.textContent = `$${elonMoney.toLocaleString()}`;
+        }
+
+        function startAutoClicker() {
+            setInterval(() => {
+                if (autoClickerActive && elonMoney >= autoClickerIncome) {
+                    money += autoClickerIncome;
+                    elonMoney -= autoClickerIncome;
+                    updateDisplays();
+                    checkElonMoney();
+                }
+            }, 1000);
+        }
+
+        function checkElonMoney() {
+            if (elonMoney <= 0) {
+                alert("Elon's money has run out! Restarting the game.");
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            money = 0;
+            elonMoney = 209_200_000_000;
+            autoClickerActive = false;
+            buyAutoClickerButton.disabled = false;
+            hackingCode = generateHackingCode();
+            updateDisplays();
+        }
+
+        // Initialize the display
+        updateDisplays();
+    </script>
+</body>
+</html>
